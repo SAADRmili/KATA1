@@ -5,7 +5,7 @@ namespace ClamCard.Core.Services
 {
     public class ClamCardService : IClamCardService
     {
-        private readonly Card card;
+        private readonly Card Card;
         private readonly Helper _helpers;
 
         private Station CurrentJourneyStart { get; set; }
@@ -14,7 +14,7 @@ namespace ClamCard.Core.Services
 
         {
             _helpers = new Helper();
-            this.card = card;
+            this.Card = card;
         }
 
         public void StartJournery(Station station)
@@ -40,7 +40,7 @@ namespace ClamCard.Core.Services
         public void HistoryJourney(Journey Fulljourney)
         {
             CurrentJourneyStart = null;
-            card.Journeys.Add(Fulljourney);
+            Card.Journeys.Add(Fulljourney);
         }
 
 
@@ -48,19 +48,13 @@ namespace ClamCard.Core.Services
         public double CalculateCostJourney(Station station,DateTime date)
         {
             var cost = _helpers.CostPerSingleJourney(CurrentJourneyStart, station);
-
             //calculate costs per time 
             var costDay = _helpers.CostPerDayLimit(CurrentJourneyStart,station) ;
-            var costWeek = _helpers.CostPerDayLimit(CurrentJourneyStart,station) ;
-            var costMonth = _helpers.CostPerDayLimit(CurrentJourneyStart,station) ;
-
             //cacluclate History cost journy by time
-            var sumCostByDay = card.Journeys.Where(j => j.Date == date.Date).Sum(j => j.Cost);
-            var sumCostByMonth = card.Journeys.Where(j => j.Date.Year == date.Date.Year && j.Date.Month == date.Month).Sum(j => j.Cost);
+            var sumCostByDay = Card.Journeys.Where(j => j.Date == date.Date).Sum(j => j.Cost);
 
             cost = (sumCostByDay + cost > costDay) ? costDay - sumCostByDay : cost;
-            cost = (sumCostByMonth + cost > costDay) ? costDay - sumCostByMonth : cost;
-
+        
             return cost;
         }
 
